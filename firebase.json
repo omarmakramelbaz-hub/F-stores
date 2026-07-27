@@ -1,0 +1,20 @@
+{
+  "source": "opened",
+  "messageId": "1770431695691546",
+  "sentTime": null,
+  "from": null,
+  "data": {
+    "order_no": "R307-16846",
+    "order_id": "6235",
+    "click_action": "https://fasakhaninja.com/admin/applies-orders/?modal=order6235",
+    "notification_type": "1",
+    "notification_sound": "long",
+    "resturant_id": "307",
+    "icon": "https://fasakhaninja.com/storage/uploadedImages//settings-1751283193.png",
+    "account_type": "vendor"
+  },
+  "notification": {
+    "title": "لديك إشعار بطلب جديد ",
+    "body": "تم إستقبال طلب جديد برقم   R307-16846"
+  }
+}

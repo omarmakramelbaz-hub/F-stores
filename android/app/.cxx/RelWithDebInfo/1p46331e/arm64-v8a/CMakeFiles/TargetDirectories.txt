@@ -1,0 +1,2 @@
+E:/SmArt Vision/Projects/fasakhaninga/faskhaNinja_vendor/android/app/.cxx/RelWithDebInfo/1p46331e/arm64-v8a/CMakeFiles/edit_cache.dir
+E:/SmArt Vision/Projects/fasakhaninga/faskhaNinja_vendor/android/app/.cxx/RelWithDebInfo/1p46331e/arm64-v8a/CMakeFiles/rebuild_cache.dir

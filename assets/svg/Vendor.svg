@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="201" height="104" viewBox="0 0 201 104">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_18812" data-name="Rectangle 18812" width="201" height="104" transform="translate(33.167 376.68)" fill="#fff" stroke="#707070" stroke-width="1"/>
+    </clipPath>
+    <clipPath id="clip-path-2">
+      <rect id="Rectangle_18811" data-name="Rectangle 18811" width="313.647" height="313.647" transform="translate(0)" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-3">
+      <rect id="Rectangle_18786" data-name="Rectangle 18786" width="313.647" height="313.647" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-7">
+      <rect id="Rectangle_18790" data-name="Rectangle 18790" width="314.903" height="501.208" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-8">
+      <rect id="Rectangle_18789" data-name="Rectangle 18789" width="315.636" height="501.655" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-9">
+      <rect id="Rectangle_18788" data-name="Rectangle 18788" width="314.979" height="500.94" rx="32.28" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-12">
+      <rect id="Rectangle_18794" data-name="Rectangle 18794" width="70.997" height="74.072" transform="translate(0 70.759) rotate(-85.31)" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-13">
+      <path id="Path_12543" data-name="Path 12543" d="M1968.3,301.936l3.8-46.3a.933.933,0,0,1,1.269-.791l69.518,27.629a1.693,1.693,0,0,1,1.064,1.712l-3.8,46.3a.933.933,0,0,1-1.27.791l-69.517-27.629A1.692,1.692,0,0,1,1968.3,301.936Z" transform="translate(-1968.297 -254.775)" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-16">
+      <rect id="Rectangle_18798" data-name="Rectangle 18798" width="71.511" height="74.019" transform="translate(0 71.272) rotate(-85.31)" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-17">
+      <rect id="Rectangle_18797" data-name="Rectangle 18797" width="71.985" height="74.81" transform="translate(0 71.744) rotate(-85.31)" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-18">
+      <path id="Path_12545" data-name="Path 12545" d="M1968.3,301.942l3.8-46.3a.933.933,0,0,1,1.269-.791l69.513,27.629a1.7,1.7,0,0,1,1.064,1.712l-3.8,46.3a.933.933,0,0,1-1.269.791l-69.513-27.629a1.7,1.7,0,0,1-1.064-1.712Z" transform="translate(-1968.298 -254.785)" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-22">
+      <rect id="Rectangle_18803" data-name="Rectangle 18803" width="67.68" height="99.672" transform="matrix(0.999, -0.053, 0.053, 0.999, 0, 3.589)" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-23">
+      <path id="Path_12546" data-name="Path 12546" d="M1847.828,201.653l50.77-2.7a1.086,1.086,0,0,1,1.14,1.185l-8.815,97.531a1.446,1.446,0,0,1-1.368,1.314l-50.771,2.7a1.086,1.086,0,0,1-1.14-1.185l8.815-97.531a1.449,1.449,0,0,1,1.368-1.314Z" transform="translate(-1837.641 -198.956)" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-26">
+      <rect id="Rectangle_18807" data-name="Rectangle 18807" width="67.747" height="99.113" transform="matrix(0.999, -0.053, 0.053, 0.999, 0, 3.593)" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-27">
+      <rect id="Rectangle_18806" data-name="Rectangle 18806" width="68.056" height="100.294" transform="matrix(0.999, -0.053, 0.053, 0.999, 0, 3.609)" fill="none"/>
+    </clipPath>
+    <clipPath id="clip-path-28">
+      <path id="Path_12548" data-name="Path 12548" d="M1847.828,201.653l50.77-2.7a1.086,1.086,0,0,1,1.14,1.185l-8.815,97.527a1.449,1.449,0,0,1-1.368,1.314l-50.771,2.7a1.086,1.086,0,0,1-1.14-1.185l8.815-97.527a1.446,1.446,0,0,1,1.368-1.314Z" transform="translate(-1837.641 -198.956)" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="Vendor" transform="translate(-33.167 -376.68)" clip-path="url(#clip-path)">
+    <g id="Group_78845" data-name="Group 78845" transform="translate(-5.324 288.639)" clip-path="url(#clip-path-2)">
+      <g id="Group_78824" data-name="Group 78824" transform="translate(0)" clip-path="url(#clip-path-3)">
+        <g id="Group_78823" data-name="Group 78823" clip-path="url(#clip-path-3)">
+          <g id="Group_78822" data-name="Group 78822" transform="translate(-5.185 -85.44)" clip-path="url(#clip-path-7)">
+            <g id="Group_78821" data-name="Group 78821" clip-path="url(#clip-path-8)">
+              <g id="Group_78820" data-name="Group 78820" clip-path="url(#clip-path-9)">
+                <rect id="Rectangle_18787" data-name="Rectangle 18787" width="314.979" height="500.94" rx="32.28" fill="none" stroke="#000" stroke-width="5.61"/>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g id="Group_78828" data-name="Group 78828" transform="translate(0)" clip-path="url(#clip-path-3)">
+        <g id="Group_78827" data-name="Group 78827" clip-path="url(#clip-path-3)">
+          <g id="Group_78826" data-name="Group 78826" transform="translate(160.877 113.763)" clip-path="url(#clip-path-12)">
+            <g id="Group_78825" data-name="Group 78825" transform="translate(1.95 0.121)" clip-path="url(#clip-path-13)">
+              <rect id="Rectangle_18793" data-name="Rectangle 18793" width="71.556" height="74.072" transform="translate(-1.973 70.914) rotate(-85.31)" fill="#fff"/>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g id="Group_78833" data-name="Group 78833" transform="translate(0)" clip-path="url(#clip-path-3)">
+        <g id="Group_78832" data-name="Group 78832" clip-path="url(#clip-path-3)">
+          <g id="Group_78831" data-name="Group 78831" transform="translate(160.854 113.526)" clip-path="url(#clip-path-16)">
+            <g id="Group_78830" data-name="Group 78830" transform="translate(0.007 -0.471)" clip-path="url(#clip-path-17)">
+              <g id="Group_78829" data-name="Group 78829" transform="translate(1.967 0.834)" clip-path="url(#clip-path-18)">
+                <path id="Path_12544" data-name="Path 12544" d="M1968.3,301.942l3.8-46.3a.933.933,0,0,1,1.269-.791l69.513,27.629a1.7,1.7,0,0,1,1.064,1.712l-3.8,46.3a.933.933,0,0,1-1.269.791l-69.513-27.629a1.7,1.7,0,0,1-1.064-1.712Z" transform="translate(-1968.298 -254.785)" fill="none" stroke="#000" stroke-width="2.81"/>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g id="Group_78834" data-name="Group 78834" transform="translate(0)" clip-path="url(#clip-path-3)">
+        <text id="V" transform="translate(179.427 145.055) rotate(20.82)" font-size="14" font-family="Anton-Regular, Anton"><tspan x="0" y="0">V</tspan></text>
+        <text id="e" transform="translate(186.436 147.719) rotate(20.82)" font-size="14" font-family="Anton-Regular, Anton"><tspan x="0" y="0">e</tspan></text>
+        <text id="n" transform="translate(193.024 152.364) rotate(20.82)" font-size="14" font-family="Anton-Regular, Anton"><tspan x="0" y="0">n</tspan></text>
+        <text id="d" transform="translate(200.485 155.202) rotate(20.82)" font-size="14" font-family="Anton-Regular, Anton"><tspan x="0" y="0">d</tspan></text>
+        <text id="o" transform="translate(207.932 158.036) rotate(20.82)" font-size="14" font-family="Anton-Regular, Anton"><tspan x="0" y="0">o</tspan></text>
+        <text id="r" transform="translate(216.432 161.057) rotate(20.82)" font-size="14" font-family="Anton-Regular, Anton"><tspan x="0" y="0">r</tspan></text>
+      </g>
+      <g id="Group_78838" data-name="Group 78838" transform="translate(0)" clip-path="url(#clip-path-3)">
+        <g id="Group_78837" data-name="Group 78837" clip-path="url(#clip-path-3)">
+          <g id="Group_78836" data-name="Group 78836" transform="translate(99.049 88.839)" clip-path="url(#clip-path-22)">
+            <g id="Group_78835" data-name="Group 78835" transform="translate(5.375 0.094)" clip-path="url(#clip-path-23)">
+              <rect id="Rectangle_18802" data-name="Rectangle 18802" width="67.68" height="99.408" transform="matrix(0.999, -0.053, 0.053, 0.999, -5.371, 3.49)" fill="#fede59"/>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g id="Group_78843" data-name="Group 78843" transform="translate(0)" clip-path="url(#clip-path-3)">
+        <g id="Group_78842" data-name="Group 78842" clip-path="url(#clip-path-3)">
+          <g id="Group_78841" data-name="Group 78841" transform="translate(99.049 88.836)" clip-path="url(#clip-path-26)">
+            <g id="Group_78840" data-name="Group 78840" transform="translate(0.004 -0.018)" clip-path="url(#clip-path-27)">
+              <g id="Group_78839" data-name="Group 78839" transform="translate(5.372 0.115)" clip-path="url(#clip-path-28)">
+                <path id="Path_12547" data-name="Path 12547" d="M1847.828,201.653l50.77-2.7a1.086,1.086,0,0,1,1.14,1.185l-8.815,97.527a1.446,1.446,0,0,1-1.368,1.314l-50.771,2.7a1.086,1.086,0,0,1-1.14-1.185l8.815-97.527a1.446,1.446,0,0,1,1.368-1.314Z" transform="translate(-1837.641 -198.956)" fill="none" stroke="#000" stroke-width="2.81"/>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g id="Group_78844" data-name="Group 78844" transform="translate(0)" clip-path="url(#clip-path-3)">
+        <text id="O-2" data-name="O" transform="translate(50.788 289.51)" font-size="29" font-family="Anton-Regular, Anton"><tspan x="0" y="0">O</tspan></text>
+        <text id="p" transform="translate(67.323 290.51)" font-size="30" font-family="Anton-Regular, Anton"><tspan x="0" y="0">p</tspan></text>
+        <text id="e-2" data-name="e" transform="translate(84.331 289.51)" font-size="29" font-family="Anton-Regular, Anton"><tspan x="0" y="0">e</tspan></text>
+        <text id="n-2" data-name="n" transform="translate(100.933 291.51)" font-size="31" font-family="Anton-Regular, Anton"><tspan x="0" y="0">n</tspan></text>
+        <text id="i" transform="translate(117.91 286.51)" font-size="26" font-family="Anton-Regular, Anton"><tspan x="0" y="0">i</tspan></text>
+        <text id="n-3" data-name="n" transform="translate(126.175 291.51)" font-size="31" font-family="Anton-Regular, Anton"><tspan x="0" y="0">n</tspan></text>
+        <text id="g" transform="translate(143.152 290.51)" font-size="30" font-family="Anton-Regular, Anton"><tspan x="0" y="0">g</tspan></text>
+        <text id="s" transform="translate(168.255 290.51)" font-size="30" font-family="Anton-Regular, Anton"><tspan x="0" y="0">s</tspan></text>
+        <text id="c" transform="translate(184.415 289.51)" font-size="29" font-family="Anton-Regular, Anton"><tspan x="0" y="0">c</tspan></text>
+        <text id="r-2" data-name="r" transform="translate(201.119 290.51)" font-size="30" font-family="Anton-Regular, Anton"><tspan x="0" y="0">r</tspan></text>
+        <text id="e-3" data-name="e" transform="translate(212.492 291.039)" font-size="31" font-family="Anton-Regular, Anton"><tspan x="0" y="0">e</tspan></text>
+        <text id="e-4" data-name="e" transform="translate(229.423 289.51)" font-size="29" font-family="Anton-Regular, Anton"><tspan x="0" y="0">e</tspan></text>
+        <text id="n-4" data-name="n" transform="translate(246.025 291.51)" font-size="31" font-family="Anton-Regular, Anton"><tspan x="0" y="0">n</tspan></text>
+        <text id="N-5" data-name="N" transform="translate(55.358 182.623) rotate(-22.22)" font-size="53" font-family="Anton-Regular, Anton"><tspan x="0" y="0">N</tspan></text>
+        <text id="i-2" data-name="i" transform="translate(80.559 170.169) rotate(-22.22)" font-size="51" font-family="Anton-Regular, Anton"><tspan x="0" y="0">i</tspan></text>
+        <text id="n-6" data-name="n" transform="translate(93.984 166.849) rotate(-22.22)" font-size="53" font-family="Anton-Regular, Anton"><tspan x="0" y="0">n</tspan></text>
+        <text id="j" transform="translate(119.243 154.372) rotate(-22.22)" font-size="51" font-family="Anton-Regular, Anton"><tspan x="0" y="0">j</tspan></text>
+        <text id="a" transform="translate(133.33 149.697) rotate(-22.22)" font-size="52" font-family="Anton-Regular, Anton"><tspan x="0" y="0">a</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "faskhaninja",
+  "private_key_id": "a2e8298ee5a0812852d3ff6d0d4dbd763bc92383",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCY2rqvJC9m65xM\nzxpVSbO1ENM6Y+yeHs+PG5NIeY0m7uw1OJXE/VS8b3mIFc0stZCMfyhc6UbwoGac\n05JXrVG62WtwaF+sJIVicnAeavLSLLvoTqQeB01vqa8yi8m7JU2fpYbPLT2+7ipP\nvDl0PQzbvvmiWfNqm0QrxG4fY40ELGLsHxDb02ha9ZXZ5+Izr5Z9Iv1eQ85D5vMF\n4gVyDDuHYhUwdHnLQxHSM+wobLJo2fhvA0ozJAthFGZFDjHnsIzEOp4eVSrdFI5a\nQRnqxgMcE9NEPMB11NMorjM6fUaFkXDBZm7Au1/R3vE8k2nIlWUdW05QskaEKAqF\nxypsmKmnAgMBAAECggEABAIl7yBPpK8kbzrnH0Pn+5trWHkcMuxk18oyGhrA/QCJ\nvJc/IUi2fYix6TAjBM8hLFpWORhKgy8Mt/pDwn12I195xy8pNFn8hNqye9dCcuFy\n+PX4NuH+JCukq79uY6CZatJ/pSMz93i8pNpWm62WLEZJpyFYIAYtGclW6pEJ5/Wb\n9EIsghKq0Wo2tzI/jzCmCpcgvIXv2ACmYqQ7ROzSfuk5XBBrLlFImYSX5cq1j1+2\npdpUe/kqkeDuT3jjaLUJ44NV3TAB1C49BcvVgAaOH2hx1dKFFUXu9DWFN/Bl6OFV\n9aUFycVE2Bl1adYGoWuLMX0Shx15qdTNbjjzYyMJoQKBgQDHW8+F2xt5QY/E18Cz\n0J+bFxkRt8xTy2Mea7QGqlRj2WKgPbANSijHbU3cEAqzfi7ywOn38LWQtBx6tiKQ\nHMqTZz/38Q8W+9nGy78Rsi3oqdccYrkuJOYWRaRgN+LslxzP3CK2zVfv9Iw78dKt\nrIbrhPE/fjMd16HHIBByON6PTwKBgQDESHitrzxZpgr6nvbl8KHkIxvfa0PK/EHL\n0PMotJeX9zwfTQXBsJXPscoCLGPhOjpK89NaWYPBpxuBEvhPoOT912ZhcPE/90+j\nOpkB8KDP+SF2/u6Aoe2sOnCfBkIH4iWxkfosIjuP+RNe7uU9cOnJNsAhOBuhl8jO\n3/B1XVNqKQKBgDux2ioSud9NKmee0y0Ew0YFXJRZnO1acYuiZH26cxqS9V1WG2lf\nU2aj7DSA+TNWDWjTKzv67+Msi3qTHzZX6LDKsfTkUchoEYXdbJE38VdBxA/T3+9Z\nTSxOHjJRibmeZho3qI1kX3iSmYs5lgQ7LQtI+5Qvjc7Zyq99gm8xaDMxAoGABjPg\nFGUAPDkCCc9yL+v9wa7WV6YVG1oDXkR5GqUyUSwP61FMyEUjRs/weUcb1Oc5Jls0\nJ5vCjSERvm9yB1onQlpHMvcVuJbBHoBgi24mNsxBoXgG42u6jgG+w1e4SHV+CXF6\nfWCLj04orYxRFDL4QFKJmcMjJGUehGMRPzQ2yZkCgYBg1Z6IHIgg7fGpUypn7DQ4\n6eUxdYU3q56PnOL1G1LE97GaicmdCSu5giBEAopwjEOvfhigUbpyT2Bi/xb6CPsU\nSWnkhlTuB954YIZiX3cOcxLbjonEgC1QndO6CC9DTUDC/3UAgxuLGRM/IwZiS9cU\nL/fK+kVIwlSW4MCbdoov+g==\n-----END PRIVATE KEY-----\n",
+  "client_email": "faskhaninjavendor@faskhaninja.iam.gserviceaccount.com",
+  "client_id": "110742361795732645595",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/faskhaninjavendor%40faskhaninja.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
