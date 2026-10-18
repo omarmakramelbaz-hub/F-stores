@@ -124,6 +124,29 @@ void main() {
     expect(controller.currentVendorHomeOrders.single.id, 21);
   });
 
+  test('an event queued as a refresh completes still starts a fresh read', () async {
+    final gateway = _Gateway();
+    final controller = gateway.controller();
+    addTearDown(controller.dispose);
+    var scheduled = false;
+    Future<void>? afterCompletion;
+    controller.addListener(() {
+      if (!scheduled && controller.pendingVendorOrdersResponse.state == ResponseState.complete) {
+        scheduled = true;
+        scheduleMicrotask(() => afterCompletion = controller.refreshHomeOrders());
+      }
+    });
+
+    final first = controller.refreshHomeOrders();
+    gateway.finishRound(0);
+    await _flush();
+    expect(gateway.calls.length, 4);
+    gateway.finishRound(2, firstId: 10);
+    await first;
+    await afterCompletion;
+    expect(controller.pendingVendorOrders.single.id, 10);
+  });
+
   test('duplicate pagination requests share one HTTP call and append once', () async {
     final gateway = _Gateway();
     final controller = gateway.controller();
