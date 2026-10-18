@@ -9,7 +9,6 @@ class PusherConfig {
 
   final String appId = '2002846';
   final String apiKEY = '0f818db2b7622218a22a';
-  final String secret = '804b44dfbb09822e5245';
   final String apiCLUSTER = 'mt1';
 
   Future<void> initPusher(
@@ -108,8 +107,6 @@ class PusherConfig {
     try {
       log('Authenticating private channel: $channelName with socket ID: $socketId');
 
-      log('Authorization Token: $token');
-
       final url = Uri.parse('https://fasakhaninja.com/api/pusher/auth');
       final response = await http.post(
         url,
@@ -117,13 +114,10 @@ class PusherConfig {
         headers: {'Accept': 'application/json', if (token != '') 'Authorization': 'Bearer $token'},
       );
 
-      log('Authentication API Response: ${response.body}');
-
       if (response.statusCode == 200) {
         final responseJson = json.decode(response.body);
 
         if (responseJson.containsKey('auth')) {
-          log("Authentication successful. Auth: ${responseJson['auth']}");
           return {
             'auth': responseJson['auth'],
             // 'channel_data': responseJson['channel_data'] ?? {},
@@ -133,7 +127,7 @@ class PusherConfig {
           return null;
         }
       } else {
-        log('Authentication failed. Status Code: ${response.statusCode}, Body: ${response.body}');
+        log('Authentication failed. Status Code: ${response.statusCode}');
         return null;
       }
     } catch (e) {
@@ -152,7 +146,7 @@ class PusherConfig {
   }
 
   void onSubscriptionSucceeded(String channelName, dynamic data) {
-    log('Successfully subscribed to channel: $channelName with data: $data');
+    log('Successfully subscribed to channel: $channelName');
   }
 
   void onSubscriptionError(String message, dynamic e) {
@@ -164,10 +158,10 @@ class PusherConfig {
   }
 
   void onMemberAdded(String channelName, PusherMember member) {
-    log('Member Added: Channel: $channelName, User: $member');
+    log('Member Added: Channel: $channelName');
   }
 
   void onMemberRemoved(String channelName, PusherMember member) {
-    log('Member Removed: Channel: $channelName, User: $member');
+    log('Member Removed: Channel: $channelName');
   }
 }

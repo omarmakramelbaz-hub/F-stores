@@ -38,7 +38,6 @@ class MyAccountScreen extends StatefulWidget {
   State<MyAccountScreen> createState() => _MyAccountScreenState();
 }
 
-@override
 class _MyAccountScreenState extends State<MyAccountScreen> {
   bool isSwitched = true;
   final formKey = GlobalKey<FormState>();

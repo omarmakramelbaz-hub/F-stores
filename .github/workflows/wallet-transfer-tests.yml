@@ -1,4 +1,4 @@
-name: Wallet destination checks
+name: Vendor regression checks
 on:
   pull_request:
   workflow_dispatch:
@@ -15,5 +15,5 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
-      - run: flutter analyze --no-fatal-infos --no-fatal-warnings lib/view/layout/vendor/wallet test/wallet_transfer_test.dart
-      - run: flutter test test/wallet_transfer_test.dart
+      - run: flutter analyze
+      - run: flutter test

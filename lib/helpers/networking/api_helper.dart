@@ -11,6 +11,8 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
+import 'api_error_data.dart';
+
 import '../../view/layout/vendor/auth/screen/login_screen.dart';
 import '../extension/context_extension.dart';
 import '../hive/hive_methods.dart';
@@ -47,11 +49,11 @@ class ApiHelper {
   final Dio _dio = Dio()
     ..interceptors.addAll([
       PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: true,
+        requestHeader: false,
+        requestBody: false,
+        responseBody: false,
         responseHeader: false,
-        error: true,
+        error: false,
         compact: true,
         maxWidth: 90,
         enabled: kDebugMode,
@@ -80,16 +82,20 @@ class ApiHelper {
   }
 
   Map<String, String> _offlineMessage() {
+    final context = NamedNavigatorImpl.navigatorState.currentContext;
     return {
-      'message': NamedNavigatorImpl.navigatorState.currentContext!.apiTr(
+      'message': context?.apiTr(
         ar: 'تأكد من الاتصال بالإنترنت',
         en: 'Make sure you are connected to the internet',
-      ),
+      ) ?? 'تأكد من الاتصال بالإنترنت',
     };
   }
 
   Map<String, String> _errorMessage() {
-    return {'message': NamedNavigatorImpl.navigatorState.currentContext!.apiTr(ar: 'حدث خطأ', en: 'An error occurred')};
+    final context = NamedNavigatorImpl.navigatorState.currentContext;
+    return {
+      'message': context?.apiTr(ar: 'حدث خطأ', en: 'An error occurred') ?? 'حدث خطأ',
+    };
   }
 
   Future<ApiResponse> get(
@@ -322,36 +328,24 @@ class ApiHelper {
   }
 
   ApiResponse _buildResponse(Response<dynamic> response) {
-    switch (response.statusCode) {
-      case 200:
-        var responseJson = response.data;
-        return ApiResponse(state: ResponseState.complete, data: responseJson);
-      case 201:
-        var responseJson = response.data;
-        return ApiResponse(state: ResponseState.complete, data: responseJson);
-      case 400:
-        var responseJson = response.data;
-        return ApiResponse(state: ResponseState.error, data: responseJson);
-      case 401:
-        var responseJson = response.data;
-        Future.delayed(Duration.zero, () {
-          NamedNavigatorImpl.navigatorState.currentState?.pushNamedAndRemoveUntil(
-            LoginScreen.routeName,
-            (route) => false,
-          );
-        });
-        return ApiResponse(state: ResponseState.unauthorized, data: responseJson);
-      case 422:
-        var responseJson = response.data;
-        return ApiResponse(state: ResponseState.error, data: responseJson);
-      case 403:
-        var responseJson = response.data;
-        return ApiResponse(state: ResponseState.error, data: responseJson);
-      case 500:
-      default:
-        var responseJson = response.data;
-        return ApiResponse(state: ResponseState.error, data: responseJson);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return ApiResponse(state: ResponseState.complete, data: response.data);
     }
+
+    final errorData = apiErrorData(
+      response.data,
+      fallbackMessage: _errorMessage()['message']!,
+    );
+    if (response.statusCode == 401) {
+      Future.delayed(Duration.zero, () {
+        NamedNavigatorImpl.navigatorState.currentState?.pushNamedAndRemoveUntil(
+          LoginScreen.routeName,
+          (route) => false,
+        );
+      });
+      return ApiResponse(state: ResponseState.unauthorized, data: errorData);
+    }
+    return ApiResponse(state: ResponseState.error, data: errorData);
   }
 
   Future<String> _getFilePath(uniqueFileName) async {
@@ -426,11 +420,11 @@ class ApiHelper {
     final dio = Dio();
     dio.interceptors.addAll([
       PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: true,
+        requestHeader: false,
+        requestBody: false,
+        responseBody: false,
         responseHeader: false,
-        error: true,
+        error: false,
         compact: true,
         maxWidth: 90,
         enabled: kDebugMode,
@@ -452,7 +446,7 @@ class ApiHelper {
       if (response.statusCode == 200) {
         // log('notification sent "$deviceToken"');
       } else {
-        log('notification not sent ${response.statusCode} -----> "$deviceToken"');
+        log('notification not sent ${response.statusCode}');
       }
     } catch (e) {
       log('Error sending notification: $e');

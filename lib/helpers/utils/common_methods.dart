@@ -12,6 +12,7 @@ import '../extension/context_extension.dart';
 import '../hive/hive_methods.dart';
 import '../locale/app_locale_key.dart';
 import '../networking/api_helper.dart';
+import '../networking/network_connection.dart';
 import '../routes/app_routers_import.dart';
 import '../theme/app_colors.dart';
 
@@ -176,14 +177,8 @@ class CommonMethods {
   }
 
   static Future<bool> hasConnection() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult.contains(ConnectivityResult.mobile)) {
-      return true;
-    } else if (connectivityResult.contains(ConnectivityResult.wifi)) {
-      return true;
-    } else {
-      return false;
-    }
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return hasNetworkConnection(connectivityResult);
   }
 
   static List<CustomSelectItem> dropdownMenuItems = [
