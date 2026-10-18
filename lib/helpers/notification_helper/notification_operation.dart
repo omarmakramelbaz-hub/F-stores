@@ -40,14 +40,9 @@ Future<void> scheduleNotification(RemoteMessage message) async {
   }
 }
 
-void iOSPermission() {
-  _firebaseMessaging!.requestPermission(alert: true, announcement: true, badge: true, sound: true);
-}
-
 void handlePath(NotificationResponse dataMap) {
   final String? payload = dataMap.payload;
   if (payload != null) {
-    log('Notification tapped with payload: $payload');
     final data = json.decode(payload);
     _onNotificationTaped(RemoteMessage(data: data));
   }
@@ -56,7 +51,6 @@ void handlePath(NotificationResponse dataMap) {
 void _onNotificationTaped(RemoteMessage message) {
   final msg = json.encode(message.data);
   var body = json.decode(msg);
-  log('Notification tapped with payload: $body');
 
   SoundNotification.stopSound();
 

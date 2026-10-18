@@ -35,8 +35,10 @@ class _MyCurrentBalanceWidgetState extends State<MyCurrentBalanceWidget> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final authController = Provider.of<AuthController>(context, listen: false);
       authController.getProfile().then((_) {
+        if (!mounted) return;
         setState(() {
           balance = authController.profile?.balance;
           minWallet = authController.profile?.minWallet;
@@ -48,10 +50,16 @@ class _MyCurrentBalanceWidgetState extends State<MyCurrentBalanceWidget> {
     _pusherController.addEventListener('balance.updated', _handleWalletUpdate);
   }
 
+  @override
+  void dispose() {
+    _pusherController.removeEventListener('balance.updated', _handleWalletUpdate);
+    super.dispose();
+  }
+
   void _handleWalletUpdate(PusherEvent event) {
+    if (!mounted) return;
     try {
       var jsonData = jsonDecode(event.data) as Map<String, dynamic>;
-      log('Wallet updated: $jsonData');
 
       String amount = jsonData['user_balance']?.toString() ?? '0';
       pusherWalletAmount = num.parse(amount).toStringAsFixed(2);

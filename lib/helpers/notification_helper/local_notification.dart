@@ -1,12 +1,16 @@
 part of 'notification_helper.dart';
 
-FlutterLocalNotificationsPlugin? _notificationsPlugin = FlutterLocalNotificationsPlugin();
+FlutterLocalNotificationsPlugin? _notificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 Future<void> localNotification() async {
   _notificationsPlugin = FlutterLocalNotificationsPlugin();
 
   var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
   var ios = const DarwinInitializationSettings(
+    requestAlertPermission: false,
+    requestBadgePermission: false,
+    requestSoundPermission: false,
     defaultPresentBadge: true,
     defaultPresentAlert: true,
     defaultPresentSound: true,
@@ -17,7 +21,6 @@ Future<void> localNotification() async {
     await _notificationsPlugin!.initialize(
       initSetting,
       onDidReceiveNotificationResponse: (not) {
-        log('onSelect Message ${not.payload}');
         handlePath(not);
       },
     );
@@ -32,7 +35,9 @@ Future<void> localNotification() async {
         sound: RawResourceAndroidNotificationSound('lastSound'),
       );
       await _notificationsPlugin!
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.createNotificationChannel(channel);
     }
   }

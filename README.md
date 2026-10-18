@@ -34,7 +34,11 @@ platform configuration when running on a device. API endpoints are defined in
 
 Feature controllers currently manage state and call the shared API helper.
 Keep related changes within their feature and separate reusable data-handling
-logic from widget lifecycle code.
+logic from widget lifecycle code. The home orders feed owns its page cursor,
+response state, and request generation. The order controller batches notifications
+and queues a new read for events received during an active refresh; it does not
+cache completed refreshes. A session change starts a new read immediately and
+invalidates older in-flight data.
 
 ## Validation
 
@@ -45,7 +49,12 @@ flutter test
 
 The regression suite covers wallet destination confirmation, malformed API error
 responses, network transport detection, and event listener registration and
-removal. GitHub Actions runs the suite for pull requests and manual dispatches.
+removal. Home feed tests also measure request coalescing and notification counts,
+exercise independent pagination, and reject responses from an earlier session.
+Permission scheduling tests ensure the first frame can render before prompting.
+Authentication tests cover local logout failures, account changes, and delayed
+profile or unauthorized responses without allowing an earlier session to win.
+GitHub Actions runs the suite for pull requests and manual dispatches.
 
 ## Maintenance guidelines
 
@@ -55,5 +64,6 @@ removal. GitHub Actions runs the suite for pull requests and manual dispatches.
 - Add behavioral regression coverage when changing order, payment, or event flows.
 
 The October 2026 review focused on shared network handling, event lifecycle,
-startup configuration, and static analysis. It did not include Android/iOS release
+home feed performance, session isolation, startup configuration, and static analysis.
+It did not include Android/iOS release
 builds, live payment tests, or a complete device-based review of every screen.

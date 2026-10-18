@@ -32,13 +32,13 @@ class _HomeVendorScreenState extends State<HomeVendorScreen> with SingleTickerPr
   late TabController _tabController;
   late PusherController _pusherController;
   int? totalPending;
-  void _refreshData() {
+  Future<void> _refreshData() async {
     if (!mounted) return;
-    var orderController = Provider.of<OrderController>(context, listen: false);
-    orderController.initialPendingVendorHomeOrders();
-    orderController.getPendingVendorHomeOrders();
-    orderController.initialCurrentVendorHomeOrders();
-    orderController.getCurrentVendorHomeOrders();
+    try {
+      await context.read<OrderController>().refreshHomeOrders();
+    } catch (_) {
+      if (kDebugMode) debugPrint('Home orders refresh could not finish.');
+    }
   }
 
   void _handleVendorUpdated(PusherEvent _) {
