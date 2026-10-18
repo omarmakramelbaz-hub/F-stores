@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
@@ -5,25 +6,149 @@ import '../../../../../helpers/routes/app_routers_import.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../helpers/networking/api_helper.dart';
+import '../../../../../helpers/hive/hive_methods.dart';
 import '../../../../../helpers/networking/urls.dart';
 import '../../../../../helpers/utils/common_methods.dart';
+import '../../auth/screen/login_screen.dart';
 import '../model/vendor_orders_model.dart';
 import '../model/vendor_pagination_model.dart';
+import 'home_orders_feed.dart';
 
 class OrderController extends ChangeNotifier {
+  OrderController({
+    HomeOrdersRequest? homeOrdersRequest,
+    String? Function()? homeOrdersSession,
+    void Function()? homeOrdersUnauthenticated,
+  }) {
+    final request = homeOrdersRequest ?? _requestHomeOrders;
+    final session = homeOrdersSession ?? HiveMethods.getToken;
+    _homeOrdersSession = session;
+    final unauthenticated = homeOrdersUnauthenticated ?? _redirectHomeUnauthorized;
+    _pendingHome = HomeOrdersFeed(
+      url: Urls.pendingOrdersHome,
+      request: request,
+      onChanged: _notifyHomeOrdersChanged,
+      sessionKey: session,
+      onUnauthorized: unauthenticated,
+      onReset: () => totalPendingHome = 0,
+      onLoaded: (model) => totalPendingHome = model.meta?.total ?? 0,
+    );
+    _currentHome = HomeOrdersFeed(
+      url: Urls.currentHomeOrders,
+      request: request,
+      onChanged: _notifyHomeOrdersChanged,
+      sessionKey: session,
+      onUnauthorized: unauthenticated,
+    );
+  }
+
+  static Future<ApiResponse> _requestHomeOrders(
+    String url, {
+    Map<String, dynamic>? queryParameters,
+  }) => ApiHelper.instance.get(url, queryParameters: queryParameters, redirectOnUnauthorized: false);
+
+  late final HomeOrdersFeed _pendingHome;
+  late final HomeOrdersFeed _currentHome;
+  late final String? Function() _homeOrdersSession;
+  String? _homeRefreshSession;
+  int _homeRefreshGeneration = 0;
+  Future<void>? _homeRefresh;
+  bool _homeRefreshQueued = false;
+  bool _homeDisposed = false;
+
+  void _redirectHomeUnauthorized() {
+    final session = _homeOrdersSession();
+    Future<void>.delayed(Duration.zero, () {
+      if (_homeDisposed || session != _homeOrdersSession()) return;
+      NamedNavigatorImpl.navigatorState.currentState?.pushNamedAndRemoveUntil(
+        LoginScreen.routeName,
+        (route) => false,
+      );
+    });
+  }
+
+  void _ensureHomeSession() {
+    _pendingHome.ensureSession();
+    _currentHome.ensureSession();
+  }
+
+  HomeOrdersFeed get _pendingHomeForSession {
+    _ensureHomeSession();
+    return _pendingHome;
+  }
+
+  HomeOrdersFeed get _currentHomeForSession {
+    _ensureHomeSession();
+    return _currentHome;
+  }
+
+  void _notifyHomeOrdersChanged() {
+    if (!_homeDisposed) notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _homeDisposed = true;
+    _pendingHome.reset();
+    _currentHome.reset();
+    super.dispose();
+  }
+
+  /// Refresh immediately, then run one trailing round for overlapping updates.
+  Future<void> refreshHomeOrders() {
+    if (_homeDisposed) return Future.value();
+    _ensureHomeSession();
+    final session = _homeOrdersSession();
+    if (_homeRefresh != null && session == _homeRefreshSession) {
+      _homeRefreshQueued = true;
+      return _homeRefresh!;
+    }
+    final completer = Completer<void>();
+    final generation = ++_homeRefreshGeneration;
+    _homeRefreshSession = session;
+    _homeRefresh = completer.future;
+    _refreshHomeOrders(generation).then(
+      (_) {
+        if (identical(_homeRefresh, completer.future)) _homeRefresh = null;
+        completer.complete();
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        if (identical(_homeRefresh, completer.future)) _homeRefresh = null;
+        completer.completeError(error, stackTrace);
+      },
+    );
+    return completer.future;
+  }
+
+  Future<void> _refreshHomeOrders(int generation) async {
+    do {
+      _homeRefreshQueued = false;
+      final loads = [
+        _pendingHome.load(pageNumber: 1, notify: false, forceRefresh: true),
+        _currentHome.load(pageNumber: 1, notify: false, forceRefresh: true),
+      ];
+      _notifyHomeOrdersChanged();
+      try {
+        await Future.wait(loads);
+      } finally {
+        if (generation == _homeRefreshGeneration) _notifyHomeOrdersChanged();
+      }
+    } while (_homeRefreshQueued && !_homeDisposed && generation == _homeRefreshGeneration);
+  }
+
   //======================================= pusher ===============================
   void addPendingHomeOrderToTop(VendorOrdersModel vendorOrdersModel) {
     // Check if the order already exists in the list
-    final exists = _pendingVendorOrders.any((order) => order.id == vendorOrdersModel.id);
+    final exists = _pendingHome.orders.any((order) => order.id == vendorOrdersModel.id);
 
     if (!exists) {
       updateTotalPendingHome((pendingOrders?.meta?.total ?? 0) + 1);
-      _pendingVendorOrders.insert(0, vendorOrdersModel);
+      _pendingHome.orders.insert(0, vendorOrdersModel);
       // Update the total count (if required)
       pendingOrders?.meta?.total = (pendingOrders?.meta?.total ?? 0) + 1;
       notifyListeners(); // Notify listeners to update the UI
     } else if (vendorOrdersModel.status == 'cancelled' || vendorOrdersModel.status == 'declined') {
-      _pendingVendorOrders.removeWhere((e) => e.id == vendorOrdersModel.id);
+      _pendingHome.orders.removeWhere((e) => e.id == vendorOrdersModel.id);
       totalPendingHome--;
       notifyListeners();
     } else {
@@ -31,7 +156,13 @@ class OrderController extends ChangeNotifier {
     }
   }
 
-  int totalPendingHome = 0;
+  int _totalPendingHome = 0;
+  int get totalPendingHome {
+    _ensureHomeSession();
+    return _totalPendingHome;
+  }
+
+  set totalPendingHome(int value) => _totalPendingHome = value;
 
   void updateTotalPendingHome(int value) {
     totalPendingHome = value;
@@ -528,147 +659,41 @@ class OrderController extends ChangeNotifier {
     }
   }
 
-  //================================ ,,,,,,,,,,,,,,,, pending home ,,,,,,,,,,,,,,,,,,,,, ===================================================
+  // Home feeds keep independent cursors and share the same request rules.
   void initialPendingVendorHomeOrders() {
-    _pendingVendorOrdersResponse = ApiResponse(state: ResponseState.sleep, data: null);
-    _pendingVendorOrders = [];
-    _pendingOrders = null;
-    _pendingOrderPage = 1;
-    _pendingOrdersHasPagination = true;
-    _pendingIsPaginating = false;
+    _pendingHome.reset();
     notifyListeners();
   }
 
-  ApiResponse _pendingVendorOrdersResponse = ApiResponse(state: ResponseState.sleep, data: null);
-  ApiResponse get pendingVendorOrdersResponse => _pendingVendorOrdersResponse;
+  ApiResponse get pendingVendorOrdersResponse => _pendingHomeForSession.response;
+  List<VendorOrdersModel> get pendingVendorOrders => _pendingHomeForSession.orders;
+  VendorModel? get pendingOrders => _pendingHomeForSession.model;
+  int get pendingOrderPage => _pendingHomeForSession.nextPage;
+  set pendingOrderPage(int value) => _pendingHomeForSession.nextPage = value;
+  bool get pendingOrdersHasPagination => _pendingHomeForSession.hasPagination;
+  bool get pendingIsPaginating => _pendingHomeForSession.isPaginating;
 
-  List<VendorOrdersModel> _pendingVendorOrders = [];
-  List<VendorOrdersModel> get pendingVendorOrders => _pendingVendorOrders;
-  VendorModel? _pendingOrders;
-  VendorModel? get pendingOrders => _pendingOrders;
-
-  int _pendingOrderPage = 1;
-  int get pendingOrderPage => _pendingOrderPage;
-
-  set pendingOrderPage(int value) {
-    _pendingOrderPage = value;
+  Future<void> getPendingVendorHomeOrders({int? pageNumber}) {
+    if (_homeDisposed) return Future.value();
+    return _pendingHome.load(pageNumber: pageNumber);
   }
 
-  bool _pendingOrdersHasPagination = true;
-  bool get pendingOrdersHasPagination => _pendingOrdersHasPagination;
-  bool _pendingIsPaginating = false;
-  bool get pendingIsPaginating => _pendingIsPaginating;
-
-  Future<void> getPendingVendorHomeOrders({int? pageNumber}) async {
-    if (_pendingOrderPage == 1) {
-      _pendingVendorOrdersResponse = ApiResponse(state: ResponseState.loading, data: null);
-      _pendingVendorOrders = [];
-      _pendingOrders = null;
-      notifyListeners();
-    } else {
-      _pendingIsPaginating = true;
-      notifyListeners();
-    }
-
-    _pendingVendorOrdersResponse = await ApiHelper.instance.get(
-      Urls.pendingOrdersHome,
-      queryParameters: {'page': pageNumber ?? _pendingOrderPage},
-    );
-    notifyListeners();
-
-    if (_pendingVendorOrdersResponse.state == ResponseState.complete) {
-      Iterable iterable = _pendingVendorOrdersResponse.data['data']['data'];
-      totalPendingHome = _pendingVendorOrdersResponse.data['data']['meta']['total'];
-
-      _pendingOrders = VendorModel.fromJson(_pendingVendorOrdersResponse.data['data']);
-
-      if (_pendingOrderPage == _pendingVendorOrdersResponse.data['data']['meta']['last_page']) {
-        _pendingOrdersHasPagination = false;
-        // CommonMethods.showToast(message: "No more orders");
-        // notifyListeners();
-      } else {
-        _pendingOrderPage++;
-        _pendingOrdersHasPagination = true;
-        notifyListeners();
-      }
-      _pendingVendorOrders.addAll(iterable.map((e) => VendorOrdersModel.fromJson(e)).toList());
-
-      notifyListeners();
-    }
-
-    _pendingIsPaginating = false;
-    notifyListeners();
-  }
-
-  //===================================,,,,,,,,,,,,,,,,,,,,,,,,, current home ,,,,,,,,,,,,,,,,,,,,,,,. =======================
   void initialCurrentVendorHomeOrders() {
-    _currentVendorHomeOrdersResponse = ApiResponse(state: ResponseState.sleep, data: null);
-    _currentVendorHomeOrders = [];
-    _currentHomeOrders = null;
-    _currentOrderPage = 1;
-    _currentHomeOrdersHasPagination = true;
-    _currentHomeIsPaginating = false;
+    _currentHome.reset();
     notifyListeners();
   }
 
-  ApiResponse _currentVendorHomeOrdersResponse = ApiResponse(state: ResponseState.sleep, data: null);
-  ApiResponse get currentVendorHomeOrdersResponse => _currentVendorHomeOrdersResponse;
+  ApiResponse get currentVendorHomeOrdersResponse => _currentHomeForSession.response;
+  List<VendorOrdersModel> get currentVendorHomeOrders => _currentHomeForSession.orders;
+  VendorModel? get currentHomeOrders => _currentHomeForSession.model;
+  int get currentOrderHomePage => _currentHomeForSession.nextPage;
+  set currentOrderHomePage(int value) => _currentHomeForSession.nextPage = value;
+  bool get currentHomeOrdersHasPagination => _currentHomeForSession.hasPagination;
+  bool get currentHomeIsPaginating => _currentHomeForSession.isPaginating;
 
-  List<VendorOrdersModel> _currentVendorHomeOrders = [];
-  List<VendorOrdersModel> get currentVendorHomeOrders => _currentVendorHomeOrders;
-  VendorModel? _currentHomeOrders;
-  VendorModel? get currentHomeOrders => _currentHomeOrders;
-
-  int _currentOrderHomePage = 1;
-  int get currentOrderHomePage => _currentOrderHomePage;
-
-  set currentOrderHomePage(int value) {
-    _currentOrderHomePage = value;
-  }
-
-  bool _currentHomeOrdersHasPagination = true;
-  bool get currentHomeOrdersHasPagination => _currentHomeOrdersHasPagination;
-  bool _currentHomeIsPaginating = false;
-  bool get currentHomeIsPaginating => _currentHomeIsPaginating;
-
-  Future<void> getCurrentVendorHomeOrders({int? pageNumber}) async {
-    if (_currentOrderPage == 1) {
-      _currentVendorHomeOrdersResponse = ApiResponse(state: ResponseState.loading, data: null);
-      _currentVendorHomeOrders = [];
-      _currentHomeOrders = null;
-      notifyListeners();
-    } else {
-      _currentHomeIsPaginating = true;
-      notifyListeners();
-    }
-
-    _currentVendorHomeOrdersResponse = await ApiHelper.instance.get(
-      Urls.currentHomeOrders,
-      queryParameters: {'page': pageNumber ?? _currentOrderHomePage},
-    );
-    notifyListeners();
-
-    if (_currentVendorHomeOrdersResponse.state == ResponseState.complete) {
-      Iterable iterable = _currentVendorHomeOrdersResponse.data['data']['data'];
-
-      _currentHomeOrders = VendorModel.fromJson(_currentVendorHomeOrdersResponse.data['data']);
-
-      if (_currentOrderHomePage == _currentVendorHomeOrdersResponse.data['data']['meta']['last_page']) {
-        _currentHomeOrdersHasPagination = false;
-        // CommonMethods.showToast(message: "No more orders");
-        // notifyListeners();
-      } else {
-        _currentOrderHomePage++;
-        _currentHomeOrdersHasPagination = true;
-        notifyListeners();
-      }
-      _currentVendorHomeOrders.addAll(iterable.map((e) => VendorOrdersModel.fromJson(e)).toList());
-
-      notifyListeners();
-    }
-
-    _currentHomeIsPaginating = false;
-    notifyListeners();
+  Future<void> getCurrentVendorHomeOrders({int? pageNumber}) {
+    if (_homeDisposed) return Future.value();
+    return _currentHome.load(pageNumber: pageNumber);
   }
 
   // ==================================== update order ==================================

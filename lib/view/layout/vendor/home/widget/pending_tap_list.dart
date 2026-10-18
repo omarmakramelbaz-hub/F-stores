@@ -29,13 +29,11 @@ class VendorPendingTapList extends StatelessWidget {
         child: ApiResponseWidget(
           emptyWidget: const NoCurrentOrderWidget(),
           apiResponse: controller.pendingVendorOrdersResponse,
-          onReload: () => controller.getPendingVendorHomeOrders(),
+          onReload: () => controller.getPendingVendorHomeOrders(pageNumber: 1),
           isEmpty: controller.pendingVendorOrders.isEmpty,
           loadingWidget: const HomeShimmerWidget(),
           child: RefreshIndicator(
-            onRefresh: () async {
-              controller.getPendingVendorHomeOrders(pageNumber: 1);
-            },
+            onRefresh: () => controller.getPendingVendorHomeOrders(pageNumber: 1),
             child: Column(
               children: [
                 ...List.generate(controller.pendingVendorOrders.length + 1, (index) {

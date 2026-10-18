@@ -5,14 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
 
+import 'event_listener_registry.dart';
+
 class PusherController with ChangeNotifier {
   late PusherChannelsFlutter _pusher;
 
   final String appId = '2002846';
   final String apiKEY = '0f818db2b7622218a22a';
-  final String secret = '804b44dfbb09822e5245';
   final String apiCLUSTER = 'mt1';
-  final Map<String, List<void Function(PusherEvent event)>> _eventListeners = {};
+  final _eventListeners = EventListenerRegistry<PusherEvent>();
 
   PusherController() {
     _pusher = PusherChannelsFlutter.getInstance();
@@ -45,7 +46,7 @@ class PusherController with ChangeNotifier {
         onDecryptionFailure: onDecryptionFailure,
         onMemberAdded: onMemberAdded,
         onMemberRemoved: onMemberRemoved,
-        logToConsole: true,
+        logToConsole: false,
         onAuthorizer: (channelName, socketId, options) async {
           return await _authenticatePrivateChannel(channelName, userId, socketId, token);
         },
@@ -61,30 +62,18 @@ class PusherController with ChangeNotifier {
 
   void _handleEvent(PusherEvent event) {
     log('Event received: ${event.eventName}');
-    log('Event data: ${event.data}');
     if (event.eventName == 'delegate.updated') {
       notifyListeners(); // Notify all listeners of `PusherController`
     }
-    // Notify listeners for the specific event
-    if (_eventListeners.containsKey(event.eventName)) {
-      for (var listener in _eventListeners[event.eventName]!) {
-        listener(event);
-      }
-    }
+    _eventListeners.dispatch(event.eventName, event);
   }
 
   void addEventListener(String eventName, void Function(PusherEvent) listener) {
-    if (!_eventListeners.containsKey(eventName)) {
-      _eventListeners[eventName] = [];
-    }
-    _eventListeners[eventName]!.add(listener);
+    _eventListeners.add(eventName, listener);
   }
 
   void removeEventListener(String eventName, void Function(PusherEvent) listener) {
-    _eventListeners[eventName]?.remove(listener);
-    if (_eventListeners[eventName]?.isEmpty ?? true) {
-      _eventListeners.remove(eventName);
-    }
+    _eventListeners.remove(eventName, listener);
   }
 
   Future<String?> _fetchSocketId() async {
@@ -152,7 +141,7 @@ class PusherController with ChangeNotifier {
         final responseJson = json.decode(response.body);
         return responseJson.containsKey('auth') ? {'auth': responseJson['auth']} : null;
       } else {
-        log('Authentication failed. Status: ${response.statusCode}, Body: ${response.body}');
+        log('Authentication failed. Status: ${response.statusCode}');
         return null;
       }
     } catch (e) {
@@ -187,7 +176,7 @@ class PusherController with ChangeNotifier {
   }
 
   void onSubscriptionSucceeded(String channelName, dynamic data) {
-    log('Successfully subscribed to channel: $channelName with data: $data');
+    log('Successfully subscribed to channel: $channelName');
   }
 
   void onSubscriptionError(String message, dynamic e) {
@@ -199,10 +188,10 @@ class PusherController with ChangeNotifier {
   }
 
   void onMemberAdded(String channelName, PusherMember member) {
-    log('Member Added: Channel: $channelName, User: $member');
+    log('Member Added: Channel: $channelName');
   }
 
   void onMemberRemoved(String channelName, PusherMember member) {
-    log('Member Removed: Channel: $channelName, User: $member');
+    log('Member Removed: Channel: $channelName');
   }
 }

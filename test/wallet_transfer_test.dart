@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import '../lib/view/layout/vendor/wallet/model/wallet_transfer.dart';
+import 'package:faskhaninja_vendor/view/layout/vendor/wallet/model/wallet_transfer.dart';
 
 void main() {
   test(

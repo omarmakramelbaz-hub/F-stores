@@ -101,8 +101,9 @@ class _MoneyTransferBottomSheetState extends State<MoneyTransferBottomSheet>
         _preview = null; // Explicit rejection: no money moved; request fresh confirmation.
       }
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         CommonMethods.showError(message: 'walletTransferFailed'.tr());
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }

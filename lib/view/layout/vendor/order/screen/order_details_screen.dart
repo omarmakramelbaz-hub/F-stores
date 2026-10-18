@@ -1263,7 +1263,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       final homeController = Provider.of<OrderController>(context, listen: false);
 
       try {
-        await Future.wait([homeController.getCurrentVendorHomeOrders(), homeController.getPendingVendorHomeOrders()]);
+        await homeController.refreshHomeOrders();
       } catch (e) {
         log('Error loading home orders: $e');
       }

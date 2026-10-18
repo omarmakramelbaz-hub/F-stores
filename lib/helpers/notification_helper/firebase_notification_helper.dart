@@ -23,27 +23,38 @@ class FirebaseNotifications {
     await _firebaseMessaging!.setAutoInitEnabled(true);
 
     // Disable automatic foreground presentation to prevent double notifications on iOS
-    await _firebaseMessaging!.setForegroundNotificationPresentationOptions(alert: false, badge: true, sound: false);
+    await _firebaseMessaging!.setForegroundNotificationPresentationOptions(
+      alert: false,
+      badge: true,
+      sound: false,
+    );
 
     await localNotification();
     await firebaseCloudMessagingListeners();
     _isConfigured = true;
 
-    // Request notification permissions last so it doesn't block setup
-    try {
-      if (Platform.isAndroid || Platform.isIOS) {
-        await [Permission.notification].request();
-      }
-    } catch (e) {
-      log('Error requesting permissions: $e');
-    }
+    scheduleNotificationPermission(
+      request: () async {
+        if (Platform.isIOS) {
+          await _firebaseMessaging!.requestPermission(
+            alert: true,
+            announcement: true,
+            badge: true,
+            sound: true,
+          );
+        } else if (Platform.isAndroid) {
+          await Permission.notification.request();
+        }
+        // APNS may become available only after the permission dialog closes.
+        await getToken();
+      },
+      onError: (_, __) => log('Unable to request notification permission.'),
+    );
   }
 
   static String? fcmToken;
   static Future<void> getToken() async {
     if (_firebaseMessaging == null) return;
-
-    log('-----------Device Token--------------');
 
     // Attempt to get token with retry for iOS/APNS
     try {
@@ -57,26 +68,18 @@ class FirebaseNotifications {
       }
 
       fcmToken = await _firebaseMessaging!.getToken();
-      log('Device Token => \n$fcmToken');
     } catch (e) {
       log('Error getting device token: $e');
     }
   }
 
   static Future<void> firebaseCloudMessagingListeners() async {
-    if (Platform.isIOS) iOSPermission();
     getToken();
     FirebaseMessaging.onMessage.listen((RemoteMessage data) {
-      log('on Message notification ${data.notification?.toMap()}');
-      log('on Message notification ${data.toMap()}');
-      log('on Message data ${data.data}');
-      log('on Message body ${data.notification?.body}');
-      log('${data.data}');
       if (Platform.isAndroid) scheduleNotification(data);
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage data) {
-      log('on Opened ${data.data}');
       NotificationResponse response = NotificationResponse(
         id: 0,
         payload: json.encode(data.data),
@@ -85,10 +88,12 @@ class FirebaseNotifications {
       handlePath(response);
     });
 
-    _notificationsPlugin!.getNotificationAppLaunchDetails().then((NotificationAppLaunchDetails? data) {
-      if (data?.notificationResponse?.payload != null && data?.notificationResponse?.payload != '') {
-        log('on Opened From Notification ${data!.notificationResponse?.payload}');
-        handlePath(data.notificationResponse!);
+    _notificationsPlugin!.getNotificationAppLaunchDetails().then((
+      NotificationAppLaunchDetails? data,
+    ) {
+      if (data?.notificationResponse?.payload != null &&
+          data?.notificationResponse?.payload != '') {
+        handlePath(data!.notificationResponse!);
       }
     });
   }
@@ -98,7 +103,9 @@ class FirebaseNotifications {
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
     log('--- Background Message Received ---');
     await localNotification();
     await scheduleNotification(message);

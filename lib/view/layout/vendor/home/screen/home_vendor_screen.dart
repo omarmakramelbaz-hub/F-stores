@@ -32,29 +32,34 @@ class _HomeVendorScreenState extends State<HomeVendorScreen> with SingleTickerPr
   late TabController _tabController;
   late PusherController _pusherController;
   int? totalPending;
-  void _refreshData() {
-    var orderController = Provider.of<OrderController>(context, listen: false);
-    orderController.initialPendingVendorHomeOrders();
-    orderController.getPendingVendorHomeOrders();
-    orderController.initialCurrentVendorHomeOrders();
-    orderController.getCurrentVendorHomeOrders();
+  Future<void> _refreshData() async {
+    if (!mounted) return;
+    try {
+      await context.read<OrderController>().refreshHomeOrders();
+    } catch (_) {
+      if (kDebugMode) debugPrint('Home orders refresh could not finish.');
+    }
+  }
+
+  void _handleVendorUpdated(PusherEvent _) {
+    _refreshData();
   }
 
   @override
   void initState() {
+    super.initState();
     _tabController = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _refreshData();
     });
     _pusherController = context.read<PusherController>();
-    _pusherController.addEventListener('vendor.updated', (PusherEvent event) => _refreshData());
-    super.initState();
+    _pusherController.addEventListener('vendor.updated', _handleVendorUpdated);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    _pusherController.removeEventListener('vendor.updated', (PusherEvent event) => _refreshData());
+    _pusherController.removeEventListener('vendor.updated', _handleVendorUpdated);
     super.dispose();
   }
 

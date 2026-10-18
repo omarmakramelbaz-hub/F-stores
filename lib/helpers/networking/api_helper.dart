@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -9,7 +8,8 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as path_provider;
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+
+import 'api_error_data.dart';
 
 import '../../view/layout/vendor/auth/screen/login_screen.dart';
 import '../extension/context_extension.dart';
@@ -44,23 +44,7 @@ class ApiHelper {
     return MediaType('${list.firstOrNull}', '${list.lastOrNull}');
   }
 
-  final Dio _dio = Dio()
-    ..interceptors.addAll([
-      PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: true,
-        responseHeader: false,
-        error: true,
-        compact: true,
-        maxWidth: 90,
-        enabled: kDebugMode,
-        filter: (options, args) {
-          if (options.path.contains('/posts')) return false;
-          return !args.isResponse || !args.hasUint8ListData;
-        },
-      ),
-    ]);
+  final Dio _dio = Dio();
 
   Options _options(Map<String, String>? headers, bool hasToken) {
     return Options(
@@ -80,16 +64,20 @@ class ApiHelper {
   }
 
   Map<String, String> _offlineMessage() {
+    final context = NamedNavigatorImpl.navigatorState.currentContext;
     return {
-      'message': NamedNavigatorImpl.navigatorState.currentContext!.apiTr(
+      'message': context?.apiTr(
         ar: 'تأكد من الاتصال بالإنترنت',
         en: 'Make sure you are connected to the internet',
-      ),
+      ) ?? 'تأكد من الاتصال بالإنترنت',
     };
   }
 
   Map<String, String> _errorMessage() {
-    return {'message': NamedNavigatorImpl.navigatorState.currentContext!.apiTr(ar: 'حدث خطأ', en: 'An error occurred')};
+    final context = NamedNavigatorImpl.navigatorState.currentContext;
+    return {
+      'message': context?.apiTr(ar: 'حدث خطأ', en: 'An error occurred') ?? 'حدث خطأ',
+    };
   }
 
   Future<ApiResponse> get(
@@ -99,6 +87,7 @@ class ApiHelper {
     void Function()? onFinish,
     void Function(int, int)? onReceiveProgress,
     bool hasToken = true,
+    bool redirectOnUnauthorized = true,
   }) async {
     ApiResponse responseJson;
     if (await CommonMethods.hasConnection() == false) {
@@ -114,7 +103,7 @@ class ApiHelper {
         options: _options(headers, hasToken),
         onReceiveProgress: onReceiveProgress,
       );
-      responseJson = _buildResponse(response);
+      responseJson = _buildResponse(response, redirectOnUnauthorized: redirectOnUnauthorized);
       Future.delayed(Duration.zero, onFinish);
     } on DioException {
       responseJson = ApiResponse(state: ResponseState.error, data: _errorMessage());
@@ -136,6 +125,7 @@ class ApiHelper {
     void Function(int, int)? onReceiveProgress,
     void Function(int, int)? onSendProgress,
     bool hasToken = true,
+    bool redirectOnUnauthorized = true,
   }) async {
     ApiResponse responseJson;
 
@@ -153,7 +143,7 @@ class ApiHelper {
         onReceiveProgress: onReceiveProgress,
         onSendProgress: onSendProgress,
       );
-      responseJson = _buildResponse(response);
+      responseJson = _buildResponse(response, redirectOnUnauthorized: redirectOnUnauthorized);
       Future.delayed(Duration.zero, onFinish);
     } on DioException {
       responseJson = ApiResponse(state: ResponseState.error, data: _errorMessage());
@@ -321,37 +311,31 @@ class ApiHelper {
     return responseJson;
   }
 
-  ApiResponse _buildResponse(Response<dynamic> response) {
-    switch (response.statusCode) {
-      case 200:
-        var responseJson = response.data;
-        return ApiResponse(state: ResponseState.complete, data: responseJson);
-      case 201:
-        var responseJson = response.data;
-        return ApiResponse(state: ResponseState.complete, data: responseJson);
-      case 400:
-        var responseJson = response.data;
-        return ApiResponse(state: ResponseState.error, data: responseJson);
-      case 401:
-        var responseJson = response.data;
+  @visibleForTesting
+  ApiResponse buildResponseForTesting(Response<dynamic> response, {bool redirectOnUnauthorized = true}) =>
+      _buildResponse(response, redirectOnUnauthorized: redirectOnUnauthorized);
+
+  ApiResponse _buildResponse(Response<dynamic> response, {bool redirectOnUnauthorized = true}) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return ApiResponse(state: ResponseState.complete, data: response.data);
+    }
+
+    final errorData = apiErrorData(
+      response.data,
+      fallbackMessage: _errorMessage()['message']!,
+    );
+    if (response.statusCode == 401) {
+      if (redirectOnUnauthorized) {
         Future.delayed(Duration.zero, () {
           NamedNavigatorImpl.navigatorState.currentState?.pushNamedAndRemoveUntil(
             LoginScreen.routeName,
             (route) => false,
           );
         });
-        return ApiResponse(state: ResponseState.unauthorized, data: responseJson);
-      case 422:
-        var responseJson = response.data;
-        return ApiResponse(state: ResponseState.error, data: responseJson);
-      case 403:
-        var responseJson = response.data;
-        return ApiResponse(state: ResponseState.error, data: responseJson);
-      case 500:
-      default:
-        var responseJson = response.data;
-        return ApiResponse(state: ResponseState.error, data: responseJson);
+      }
+      return ApiResponse(state: ResponseState.unauthorized, data: errorData);
     }
+    return ApiResponse(state: ResponseState.error, data: errorData);
   }
 
   Future<String> _getFilePath(uniqueFileName) async {
@@ -424,21 +408,10 @@ class ApiHelper {
     };
 
     final dio = Dio();
-    dio.interceptors.addAll([
-      PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: true,
-        responseHeader: false,
-        error: true,
-        compact: true,
-        maxWidth: 90,
-        enabled: kDebugMode,
-      ),
-    ]);
+
 
     try {
-      final response = await dio.post(
+      await dio.post(
         endpointFirebaseCLoudMessaging,
         data: message,
         options: Options(
@@ -449,13 +422,8 @@ class ApiHelper {
         ),
       );
 
-      if (response.statusCode == 200) {
-        // log('notification sent "$deviceToken"');
-      } else {
-        log('notification not sent ${response.statusCode} -----> "$deviceToken"');
-      }
-    } catch (e) {
-      log('Error sending notification: $e');
+    } catch (_) {
+      // Notification delivery is best effort; avoid logging tokens or payloads.
     }
   }
   // Future<void> sendNotification({
@@ -484,7 +452,6 @@ class ApiHelper {
   //     Future.delayed(Duration.zero, onFinish);
   //   } catch (e) {
   //     Future.delayed(Duration.zero, onFinish);
-  //     log("error push notification");
   //   }
   // }
 }

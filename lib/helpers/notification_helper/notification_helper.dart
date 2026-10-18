@@ -20,6 +20,7 @@ import '../../view/layout/vendor/request_delegate/screen/request_delegate_screen
 import '../../view/layout/vendor/wallet/screen/wallet_screen.dart';
 import '../routes/app_routers_import.dart';
 import 'firebase_options.dart';
+import 'notification_permission.dart';
 import 'sound_notification.dart';
 
 part 'firebase_notification_helper.dart';

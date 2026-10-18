@@ -30,7 +30,7 @@ class VendorCurrentTapList extends StatelessWidget {
         child: ApiResponseWidget(
           emptyWidget: const NoCurrentOrderWidget(),
           apiResponse: controller.currentVendorHomeOrdersResponse,
-          onReload: () => controller.getCurrentVendorHomeOrders(),
+          onReload: () => controller.getCurrentVendorHomeOrders(pageNumber: 1),
           isEmpty: controller.currentVendorHomeOrders.isEmpty,
           loadingWidget: const HomeShimmerWidget(),
           child: Column(
