@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "user_local_snapshot_date": "2026-10-20",
+  "capture_recorded_at": "2026-10-19T23:41:21.815Z",
+  "repository": "omarmakramelbaz-hub/F-stores",
+  "backup_branch": "backup/2026-10-20-all-apps",
+  "default_branch": "main",
+  "default_branch_commit": "e789a3fbcc7812fe45ea3808cb92239a86cdbc44",
+  "default_tree_sha": "4732ed1f54d0c02432fff825816a7ec12a481586",
+  "branches": [
+    {
+      "ref": "refs/heads/backup/pre-rollback-20261003-0303",
+      "commit_sha": "af82193ff7b68c14040c4a257dbbe1a6502a4417"
+    },
+    {
+      "ref": "refs/heads/codex/code-quality-review-20261018",
+      "commit_sha": "b4a44a6a28eb2234480ccc83afb81b57897bef16"
+    },
+    {
+      "ref": "refs/heads/codex/wallet-destination-20260928",
+      "commit_sha": "d3e8b09ba1760a8ac5c757519a8332d9fe2ad1c7"
+    },
+    {
+      "ref": "refs/heads/main",
+      "commit_sha": "e789a3fbcc7812fe45ea3808cb92239a86cdbc44"
+    }
+  ],
+  "tags": [],
+  "scope": {
+    "source_commit_histories": true,
+    "unmerged_branch_tips": true,
+    "live_server_working_tree": false,
+    "live_database": false,
+    "server_environment_secrets": false,
+    "server_uploads": false,
+    "external_lfs_payloads": false,
+    "external_submodule_repositories": false,
+    "github_release_assets": false
+  },
+  "preservation_method": "Archival ancestry anchor. The snapshot tree equals the captured default tree plus this manifest. Other branch tips are retained as parents, directly or through grouped archival commits. This is not a merge of their file contents. Do not merge this archival branch into development. Restore a specific source version by checking out its original commit from the branches/tags map.",
+  "verification": "Parent objects, archive tree, manifest and final branch ref are read back after creation. No production deployment or database restore performed."
+}
